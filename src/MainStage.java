@@ -27,6 +27,7 @@ public class MainStage extends Application {
         HBox hbox = new HBox();
         Label lblSelect = new Label("Select table:");
         ComboBox<String> cboxTableSelect = new ComboBox<>();
+        cboxTableSelect.setId("comboBox");
         Button btnInsert = new Button("Add entry");
 
         hbox.getChildren().addAll(lblSelect, cboxTableSelect, btnInsert);
@@ -36,6 +37,9 @@ public class MainStage extends Application {
         txtError.setDisable(true);
 
         vbox.getChildren().addAll(hbox, tableView, txtError);
+
+        controller = new MainController(cboxTableSelect, tableView, btnInsert, txtError);
+        controller.fillComboBox();
 
         Scene scene = new Scene(vbox);
         primaryStage.setScene(scene);
