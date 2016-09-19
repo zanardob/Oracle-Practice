@@ -22,7 +22,7 @@ public class DatabaseConnector {
         if(connection != null && !connection.isClosed()) {
             return connection;
         }
-
+        
         connect();
         return connection;
     }
