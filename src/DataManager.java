@@ -1,46 +1,43 @@
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
 
 public class DataManager {
 
-    public ObservableList<String> getTableNames() throws ClassNotFoundException, SQLException {
+    public ArrayList<Entity> getEntityList() throws ClassNotFoundException, SQLException {
         Connection connection = DatabaseConnector.getConnection();
         Statement statement = connection.createStatement();
-        ObservableList<String> names = FXCollections.observableArrayList();
+        ArrayList<Entity> entities = new ArrayList<>();
         String query;
         ResultSet rs;
 
         query = "SELECT table_name FROM user_tables MINUS SELECT table_name FROM user_snapshots";
         rs = statement.executeQuery(query);
         while(rs.next()) {
-            names.add(rs.getString("table_name"));
+            entities.add(new Entity(rs.getString("table_name"), Type.TABLE));
         }
 
         query = "SELECT view_name FROM user_views";
         rs = statement.executeQuery(query);
         while(rs.next()) {
-            names.add(rs.getString("view_name") + " (view)");
+            entities.add(new Entity(rs.getString("view_name"), Type.VIEW));
         }
 
         query = "SELECT table_name FROM user_snapshots";
         rs = statement.executeQuery(query);
         while(rs.next()) {
-            names.add(rs.getString("table_name") + " (snapshot)");
+            entities.add(new Entity(rs.getString("table_name"), Type.SNAPSHOT));
         }
 
-        return names;
+        return entities;
     }
 
-    public ResultSet getTable(String tableName) throws SQLException, ClassNotFoundException {
+    public ResultSet getEntity(String entityName) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseConnector.getConnection();
         Statement statement = connection.createStatement();
-        ObservableList<String> names = FXCollections.observableArrayList();
-        String query = "SELECT * FROM " + tableName;
+        String query = "SELECT * FROM " + entityName;
         ResultSet rs = statement.executeQuery(query);
 
         return rs;

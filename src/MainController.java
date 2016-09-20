@@ -6,19 +6,33 @@ import javafx.scene.control.*;
 import javafx.util.Callback;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import javafx.scene.control.TableColumn.CellDataFeatures;
 
 public class MainController {
     private DataManager dm;
 
     private ComboBox<String> cbox;
-    private TableView table;
+    private TableView tableView;
     private Button btnInsert;
     private TextField txtError;
+    private ArrayList<Entity> entities;
 
     void fillComboBox() {
         try {
-            cbox.setItems(dm.getTableNames());
+            // Get a list for all the entities in the schema
+            entities = dm.getEntityList();
+            ObservableList<String> entityNames = FXCollections.observableArrayList();
+
+            // Add the viewName for each entity in an ObservableList to be used in the ComboBox
+            entityNames.addAll(
+                    entities.stream()
+                            .map(Entity::getViewName)
+                            .collect(Collectors.toList()));
+            cbox.setItems(entityNames);
         } catch (ClassNotFoundException e) {
             txtError.setText("Check your JDBC driver.");
             e.printStackTrace();
@@ -31,11 +45,22 @@ public class MainController {
     void fillTable() {
         ResultSet rs;
         ObservableList<ObservableList> data = FXCollections.observableArrayList();
-        table.getItems().clear();
-        table.getColumns().clear();
+        tableView.getItems().clear();
+        tableView.getColumns().clear();
 
         try {
-            rs = dm.getTable(cbox.getValue());
+            // Find the entity for which the viewName is the same as the name on the ComboBox
+            Optional<Entity> entity = entities
+                    .stream()
+                    .filter(e -> e.getViewName() == cbox.getValue())
+                    .findFirst();
+
+            // Extract the realName of the entity
+            String entityName = entity.orElseThrow(() -> new ClassNotFoundException()).getRealName();
+
+            // Query the appropriate entity in the schema
+            rs = dm.getEntity(entityName);
+
             for(int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
                 final int j = i;
                 TableColumn column = new TableColumn(rs.getMetaData().getColumnName(i + 1));
@@ -46,7 +71,7 @@ public class MainController {
                     }
                 });
 
-                table.getColumns().addAll(column);
+                tableView.getColumns().addAll(column);
             }
 
             while(rs.next()) {
@@ -63,8 +88,7 @@ public class MainController {
                 data.add(row);
             }
 
-            table.setItems(data);
-
+            tableView.setItems(data);
         } catch (ClassNotFoundException e) {
             txtError.setText("Check your JDBC driver.");
             e.printStackTrace();
@@ -74,9 +98,9 @@ public class MainController {
         }
     }
 
-    MainController(ComboBox<String> cbox, TableView table, Button btnInsert, TextField txtError) {
+    MainController(ComboBox<String> cbox, TableView tableView, Button btnInsert, TextField txtError) {
         this.cbox = cbox;
-        this.table = table;
+        this.tableView = tableView;
         this.btnInsert = btnInsert;
         this.txtError = txtError;
 
