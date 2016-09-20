@@ -1,5 +1,6 @@
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import database.DataManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

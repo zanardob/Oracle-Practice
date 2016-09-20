@@ -1,11 +1,5 @@
 package utils;
 
-enum Type {
-    TABLE,
-    VIEW,
-    SNAPSHOT
-}
-
 public class Entity {
     private String realName;
     private String viewName;

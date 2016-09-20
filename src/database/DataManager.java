@@ -1,4 +1,7 @@
-package utils;
+package database;
+
+import utils.Entity;
+import utils.Type;
 
 import java.sql.*;
 import java.util.ArrayList;

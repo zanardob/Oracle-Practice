@@ -5,7 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import utils.DataManager;
+import database.DataManager;
 import utils.Entity;
 
 import javafx.beans.property.SimpleStringProperty;
