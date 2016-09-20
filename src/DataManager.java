@@ -1,6 +1,3 @@
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -38,6 +35,15 @@ public class DataManager {
         Connection connection = DatabaseConnector.getConnection();
         Statement statement = connection.createStatement();
         String query = "SELECT * FROM " + entityName;
+        ResultSet rs = statement.executeQuery(query);
+
+        return rs;
+    }
+
+    public ResultSet getColumnMetadata(String entityName) throws SQLException, ClassNotFoundException {
+        Connection connection = DatabaseConnector.getConnection();
+        Statement statement = connection.createStatement();
+        String query = "SELECT COLUMN_NAME, DATA_TYPE, DATA_LENGTH FROM USER_TAB_COLUMNS WHERE TABLE_NAME = '" + entityName + "'";
         ResultSet rs = statement.executeQuery(query);
 
         return rs;
