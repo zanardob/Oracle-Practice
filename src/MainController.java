@@ -2,11 +2,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.util.Callback;
-import javax.xml.transform.Result;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javafx.scene.control.TableColumn.CellDataFeatures;
@@ -55,7 +52,13 @@ public class MainController {
             while(rs.next()) {
                 ObservableList<String> row = FXCollections.observableArrayList();
                 for(int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-                    row.add(rs.getString(i));
+                    String value = rs.getString(i);
+
+                    // Null values handling
+                    if(rs.wasNull())
+                        value = "<null>";
+
+                    row.add(value);
                 }
                 data.add(row);
             }

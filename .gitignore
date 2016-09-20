@@ -221,6 +221,7 @@ pip-log.txt
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/vcs.xml
+.idea/dataSources/
 .idea/dataSources.xml
 .idea/dataSources.ids
 .idea/dataSources.local.xml
