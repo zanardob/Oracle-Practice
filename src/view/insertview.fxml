@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 
 <BorderPane prefHeight="10.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.InsertController">
    <bottom>
@@ -17,7 +17,7 @@
       </BorderPane>
    </bottom>
    <center>
-      <VBox prefHeight="187.0" prefWidth="300.0" spacing="5.0" BorderPane.alignment="CENTER" />
+      <VBox fx:id="vboxFields" prefHeight="187.0" prefWidth="300.0" spacing="5.0" BorderPane.alignment="CENTER" />
    </center>
    <padding>
       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
