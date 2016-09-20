@@ -41,4 +41,13 @@ public class DataManager {
 
         return rs;
     }
+
+    public ResultSet getColumnMetadata(String entityName) throws SQLException, ClassNotFoundException {
+        Connection connection = DatabaseConnector.getConnection();
+        Statement statement = connection.createStatement();
+        String query = "SELECT COLUMN_NAME, DATA_TYPE, DATA_LENGTH FROM USER_TAB_COLUMNS WHERE TABLE_NAME = '" + entityName + "'";
+        ResultSet rs = statement.executeQuery(query);
+
+        return rs;
+    }
 }
