@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+      prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controller.MainController">
+    <VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="600.0" spacing="5.0">
+        <HBox alignment="CENTER" prefHeight="31.0" prefWidth="600.0" spacing="10.0">
+            <VBox.margin>
+                <Insets left="5.0" right="5.0" top="5.0"/>
+            </VBox.margin>
+            <Label text="Select a table:"/>
+            <ComboBox fx:id="cboxTableSelect" onAction="#fillTableView" prefWidth="150.0"/>
+        </HBox>
+        <TableView fx:id="tableView" prefHeight="400.0" prefWidth="200.0">
+            <VBox.margin>
+                <Insets left="5.0" right="5.0"/>
+            </VBox.margin>
+        </TableView>
+        <Button mnemonicParsing="false" onAction="#insert" text="Add entry">
+            <VBox.margin>
+                <Insets left="5.0" right="5.0"/>
+            </VBox.margin>
+        </Button>
+        <TextField fx:id="txtError" disable="true" focusTraversable="false" text="No errors.">
+            <VBox.margin>
+                <Insets bottom="5.0" left="5.0" right="5.0"/>
+            </VBox.margin>
+        </TextField>
+    </VBox>
+</Pane>

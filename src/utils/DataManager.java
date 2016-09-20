@@ -1,5 +1,4 @@
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+package utils;
 
 import java.sql.*;
 import java.util.ArrayList;

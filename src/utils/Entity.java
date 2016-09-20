@@ -1,3 +1,5 @@
+package utils;
+
 enum Type {
     TABLE,
     VIEW,
