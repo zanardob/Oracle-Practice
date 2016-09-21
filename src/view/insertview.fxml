@@ -17,9 +17,15 @@
       </BorderPane>
    </bottom>
    <center>
-      <VBox fx:id="vboxFields" prefHeight="187.0" prefWidth="300.0" spacing="5.0" BorderPane.alignment="CENTER" />
+      <VBox fx:id="vboxFields" prefHeight="187.0" prefWidth="300.0" spacing="5.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="5.0" />
+         </BorderPane.margin></VBox>
    </center>
    <padding>
       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
    </padding>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
 </BorderPane>
