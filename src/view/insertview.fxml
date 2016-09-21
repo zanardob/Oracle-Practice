@@ -9,7 +9,7 @@
    <bottom>
       <BorderPane prefHeight="0.0" prefWidth="300.0" BorderPane.alignment="CENTER">
          <left>
-            <Button mnemonicParsing="false" onAction="#cancel" text="Cancel" BorderPane.alignment="CENTER" />
+            <Button mnemonicParsing="false" onAction="#closeWindow" text="Cancel" BorderPane.alignment="CENTER" />
          </left>
          <right>
             <Button mnemonicParsing="false" onAction="#confirm" text="Confirm" BorderPane.alignment="CENTER" />
