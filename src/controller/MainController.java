@@ -35,7 +35,7 @@ public class MainController implements Initializable {
     @FXML public TableView tableView;
     @FXML public TextField txtError;
 
-    public void fillTableView(ActionEvent actionEvent) {
+    public void fillTableView() {
         ResultSet rs;
         ObservableList<ObservableList> data = FXCollections.observableArrayList();
         tableView.getItems().clear();
@@ -94,14 +94,33 @@ public class MainController implements Initializable {
     public void insert(ActionEvent actionEvent) {
         Stage insertion = new Stage();
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/view/insertview.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/insertview.fxml"));
+            Parent root = loader.load();
+
+            Optional<Entity> entity = entities
+                    .stream()
+                    .filter(e -> e.getViewName() == cboxTableSelect.getValue())
+                    .findFirst();
+
+            // Extract the realName of the entity
+            String entityName = entity.orElseThrow(() -> new ClassNotFoundException()).getRealName();
+
+            InsertController controller = loader.getController();
+            controller.setEntityName(entityName);
+            controller.setTxtError(txtError);
+            controller.fillDialog();
+
             insertion.setScene(new Scene(root));
             insertion.setTitle("Add new entry");
             insertion.initModality(Modality.APPLICATION_MODAL);
             insertion.initOwner(txtError.getScene().getWindow());
             insertion.showAndWait();
+            fillTableView();
         } catch (IOException e) {
             txtError.setText("Application files corrupted.");
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            txtError.setText("Check your JDBC driver.");
             e.printStackTrace();
         }
     }

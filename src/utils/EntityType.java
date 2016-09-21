@@ -1,6 +1,6 @@
 package utils;
 
-public enum Type {
+public enum EntityType {
     TABLE,
     VIEW,
     SNAPSHOT

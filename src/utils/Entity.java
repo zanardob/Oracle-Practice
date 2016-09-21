@@ -3,15 +3,15 @@ package utils;
 public class Entity {
     private String realName;
     private String viewName;
-    private Type type;
+    private EntityType entityType;
 
-    public Entity(String name, Type type) {
+    public Entity(String name, EntityType entityType) {
         this.realName = name;
-        this.type = type;
+        this.entityType = entityType;
 
-        if(type == Type.VIEW)
+        if(entityType == EntityType.VIEW)
             viewName = name + " (view)";
-        else if(type == Type.SNAPSHOT)
+        else if(entityType == EntityType.SNAPSHOT)
             viewName = name + " (snapshot)";
         else
             viewName = name;
@@ -25,7 +25,7 @@ public class Entity {
         return viewName;
     }
 
-    public Type getType() {
-        return type;
+    public EntityType getEntityType() {
+        return entityType;
     }
 }
