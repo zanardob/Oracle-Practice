@@ -35,6 +35,33 @@ public class MainController implements Initializable {
     @FXML public TableView tableView;
     @FXML public TextField txtError;
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        dm = new DataManager();
+        fillComboBox();
+    }
+
+    void fillComboBox() {
+        try {
+            // Get a list for all the entities in the schema
+            entities = dm.getEntityList();
+            ObservableList<String> entityNames = FXCollections.observableArrayList();
+
+            // Add the viewName for each entity in an ObservableList to be used in the ComboBox
+            entityNames.addAll(
+                    entities.stream()
+                            .map(Entity::getViewName)
+                            .collect(Collectors.toList()));
+            cboxTableSelect.setItems(entityNames);
+        } catch (ClassNotFoundException e) {
+            txtError.setText("Check your JDBC driver.");
+            e.printStackTrace();
+        } catch (SQLException e) {
+            txtError.setText("Erro SQL: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     public void fillTableView() {
         ResultSet rs;
         ObservableList<ObservableList> data = FXCollections.observableArrayList();
@@ -93,8 +120,9 @@ public class MainController implements Initializable {
 
     public void insert(ActionEvent actionEvent) {
         Stage insertion = new Stage();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/insertview.fxml"));
+
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/insertview.fxml"));
             Parent root = loader.load();
 
             Optional<Entity> entity = entities
@@ -103,12 +131,12 @@ public class MainController implements Initializable {
                     .findFirst();
 
             // Extract the realName of the entity
-            String entityName = entity.orElseThrow(() -> new ClassNotFoundException()).getRealName();
+            String entityName = entity.orElseThrow(NullPointerException::new).getRealName();
 
             InsertController controller = loader.getController();
             controller.setEntityName(entityName);
             controller.setTxtError(txtError);
-            controller.fillDialog();
+            controller.fillDialog(null);
 
             insertion.setScene(new Scene(root));
             insertion.setTitle("Add new entry");
@@ -119,35 +147,13 @@ public class MainController implements Initializable {
         } catch (IOException e) {
             txtError.setText("Application files corrupted.");
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            txtError.setText("Check your JDBC driver.");
-            e.printStackTrace();
-        }
-    }
+        } catch (NullPointerException e){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("No entity selected!");
+            alert.setContentText("Please select an entity from the list.");
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        dm = new DataManager();
-        fillComboBox();
-    }
-
-    void fillComboBox() {
-        try {
-            // Get a list for all the entities in the schema
-            entities = dm.getEntityList();
-            ObservableList<String> entityNames = FXCollections.observableArrayList();
-
-            // Add the viewName for each entity in an ObservableList to be used in the ComboBox
-            entityNames.addAll(
-                    entities.stream()
-                            .map(Entity::getViewName)
-                            .collect(Collectors.toList()));
-            cboxTableSelect.setItems(entityNames);
-        } catch (ClassNotFoundException e) {
-            txtError.setText("Check your JDBC driver.");
-            e.printStackTrace();
-        } catch (SQLException e) {
-            txtError.setText("Erro SQL: " + e.getMessage());
+            cboxTableSelect.requestFocus();
+            alert.showAndWait();
             e.printStackTrace();
         }
     }
