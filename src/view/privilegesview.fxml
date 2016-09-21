@@ -2,13 +2,12 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
 
-<BorderPane prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PrivilegeController">
    <bottom>
-      <Button mnemonicParsing="false" onAction="#back" text="Back" BorderPane.alignment="CENTER">
+      <Button mnemonicParsing="false" onAction="#closeWindow" text="Back" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="5.0" top="5.0" />
          </BorderPane.margin>
@@ -17,8 +16,8 @@
    <center>
       <TableView fx:id="privilegeTableView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <columns>
-          <TableColumn prefWidth="145.0" text="User" />
-          <TableColumn prefWidth="145.0" text="Privilege" />
+          <TableColumn fx:id="User" prefWidth="145.0" text="User" />
+          <TableColumn fx:id="Privilege" prefWidth="145.0" text="Privilege" />
         </columns>
          <BorderPane.margin>
             <Insets left="5.0" right="5.0" top="5.0" />

@@ -1,16 +1,15 @@
 package database;
 
-import utils.Entity;
-import utils.Field;
-import utils.EntityType;
-import utils.FieldType;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import utils.*;
 
 import java.sql.*;
 import java.util.ArrayList;
 
 public class DataManager {
 
-    public ArrayList<Entity> getEntityList() throws ClassNotFoundException, SQLException {
+    public ArrayList<Entity> getEntityList() throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseConnector.getConnection();
         Statement statement = connection.createStatement();
         ArrayList<Entity> entities = new ArrayList<>();
@@ -54,6 +53,32 @@ public class DataManager {
         ResultSet rs = statement.executeQuery(query);
 
         return rs;
+    }
+
+    public ObservableList<UserPrivilege> getPrivileges(Entity entity) throws SQLException, ClassNotFoundException {
+        Connection connection = DatabaseConnector.getConnection();
+        Statement statement = connection.createStatement();
+        ObservableList<UserPrivilege> privileges = FXCollections.observableArrayList();
+
+        String query;
+        String entityName = entity.getRealName();
+        if(entity.getEntityType() == EntityType.VIEW ){
+            query = "SELECT OWNER FROM ALL_VIEWS WHERE VIEW_NAME = '" + entityName + "'";
+        } else {
+            query = "SELECT OWNER FROM ALL_TABLES WHERE TABLE_NAME = '" + entityName + "'";
+        }
+        ResultSet rs = statement.executeQuery(query);
+
+        rs.next();
+        privileges.add(new UserPrivilege(rs.getString("OWNER"), "OWNER"));
+
+        query = "SELECT GRANTEE, PRIVILEGE FROM USER_TAB_PRIVS WHERE TABLE_NAME = '" + entityName + "'";
+        rs = statement.executeQuery(query);
+        while(rs.next()){
+            privileges.add(new UserPrivilege(rs.getString("GRANTEE"), rs.getString("PRIVILEGE")));
+        }
+
+        return privileges;
     }
 
     public void addEntry(String entityName, ArrayList<Field> fields) throws SQLException, ClassNotFoundException {

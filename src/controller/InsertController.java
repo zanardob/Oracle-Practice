@@ -40,6 +40,7 @@ public class InsertController implements Initializable {
     }
 
     public void confirm(ActionEvent actionEvent) {
+        // Get the text from all the TextFields
         for(int i = 0; i < txtFields.size(); i++){
             fields.get(i).setValue(txtFields.get(i).getText());
         }

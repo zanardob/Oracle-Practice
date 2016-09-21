@@ -17,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.util.Callback;
+import utils.EntityType;
 
 import java.io.IOException;
 import java.net.URL;
@@ -41,7 +42,7 @@ public class MainController implements Initializable {
         fillComboBox();
     }
 
-    void fillComboBox() {
+    public void fillComboBox() {
         try {
             // Get a list for all the entities in the schema
             entities = dm.getEntityList();
@@ -62,6 +63,25 @@ public class MainController implements Initializable {
         }
     }
 
+    private void showSelectionAlert(){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setHeaderText("No table selected!");
+        alert.setContentText("Please select a TABLE from the list.");
+
+        cboxTableSelect.requestFocus();
+        alert.showAndWait();
+    }
+
+    // Gets the realName of an entity from the list of fntities
+    private Entity getEntity(){
+        Optional<Entity> entity = entities
+                .stream()
+                .filter(e -> e.getViewName() == cboxTableSelect.getValue())
+                .findFirst();
+
+        return entity.orElseThrow(NullPointerException::new);
+    }
+
     public void fillTableView() {
         ResultSet rs;
         ObservableList<ObservableList> data = FXCollections.observableArrayList();
@@ -69,14 +89,7 @@ public class MainController implements Initializable {
         tableView.getColumns().clear();
 
         try {
-            // Find the entity for which the viewName is the same as the name on the ComboBox
-            Optional<Entity> entity = entities
-                    .stream()
-                    .filter(e -> e.getViewName() == cboxTableSelect.getValue())
-                    .findFirst();
-
-            // Extract the realName of the entity
-            String entityName = entity.orElseThrow(() -> new ClassNotFoundException()).getRealName();
+            String entityName = getEntity().getRealName();
 
             // Query the appropriate entity in the schema
             rs = dm.getEntity(entityName);
@@ -125,13 +138,12 @@ public class MainController implements Initializable {
         try {
             Parent root = loader.load();
 
-            Optional<Entity> entity = entities
-                    .stream()
-                    .filter(e -> e.getViewName() == cboxTableSelect.getValue())
-                    .findFirst();
-
-            // Extract the realName of the entity
-            String entityName = entity.orElseThrow(NullPointerException::new).getRealName();
+            Entity entity = getEntity();
+            if(entity.getEntityType() != EntityType.TABLE) {
+                showSelectionAlert();
+                return;
+            }
+            String entityName = entity.getRealName();
 
             InsertController controller = loader.getController();
             controller.setEntityName(entityName);
@@ -139,7 +151,7 @@ public class MainController implements Initializable {
             controller.fillDialog(null);
 
             insertion.setScene(new Scene(root));
-            insertion.setTitle("Add new entry");
+            insertion.setTitle("Add new entry into " + entityName);
             insertion.initModality(Modality.APPLICATION_MODAL);
             insertion.initOwner(txtError.getScene().getWindow());
             insertion.showAndWait();
@@ -148,12 +160,36 @@ public class MainController implements Initializable {
             txtError.setText("Application files corrupted.");
             e.printStackTrace();
         } catch (NullPointerException e){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("No entity selected!");
-            alert.setContentText("Please select an entity from the list.");
+            showSelectionAlert();
+            e.printStackTrace();
+        }
+    }
 
-            cboxTableSelect.requestFocus();
-            alert.showAndWait();
+    public void viewPrivileges(ActionEvent actionEvent) {
+        Stage privileges = new Stage();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/privilegesview.fxml"));
+
+        try {
+            Parent root = loader.load();
+
+            Entity entity = getEntity();
+            String entityName = entity.getRealName();
+
+            PrivilegeController controller = loader.getController();
+            controller.setEntity(entity);
+            controller.setTxtError(txtError);
+            controller.fillTableView(null);
+
+            privileges.setScene(new Scene(root));
+            privileges.setTitle("Privileges for " + entityName);
+            privileges.initModality(Modality.APPLICATION_MODAL);
+            privileges.initOwner(txtError.getScene().getWindow());
+            privileges.showAndWait();
+        } catch (IOException e) {
+            txtError.setText("Application files corrupted.");
+            e.printStackTrace();
+        } catch (NullPointerException e){
+            showSelectionAlert();
             e.printStackTrace();
         }
     }
