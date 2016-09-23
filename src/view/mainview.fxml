@@ -11,7 +11,7 @@
           <children>
             <BorderPane prefHeight="30.0" prefWidth="200.0">
                <left>
-                    <HBox alignment="CENTER" prefHeight="31.0" prefWidth="273.0" spacing="10.0" BorderPane.alignment="CENTER_LEFT">
+                    <HBox alignment="CENTER_LEFT" prefHeight="31.0" prefWidth="273.0" spacing="10.0" BorderPane.alignment="CENTER_LEFT">
                        <children>
                            <Label text="Select a table:" />
                            <ComboBox fx:id="cboxTableSelect" onAction="#fillTableView" prefWidth="150.0" />
@@ -21,22 +21,19 @@
                <right>
                   <Button mnemonicParsing="false" onAction="#getSchemaSQL" text="Schema SQL" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
-                        <Insets right="5.0" />
+                        <Insets />
                      </BorderPane.margin>
                   </Button>
                </right>
-               <padding>
-                  <Insets top="5.0" />
-               </padding>
             </BorderPane>
               <TableView fx:id="tableView" prefHeight="400.0" prefWidth="200.0">
                   <VBox.margin>
-                      <Insets left="5.0" right="5.0" />
+                      <Insets />
                   </VBox.margin>
               </TableView>
             <BorderPane prefHeight="35.0" prefWidth="600.0">
                <VBox.margin>
-                  <Insets left="5.0" right="5.0" />
+                  <Insets />
                </VBox.margin>
                <left>
                   <Button mnemonicParsing="false" onAction="#viewPrivileges" text="Check privileges" BorderPane.alignment="CENTER" />
@@ -47,10 +44,13 @@
             </BorderPane>
               <TextField fx:id="txtError" disable="true" focusTraversable="false" text="No errors.">
                <VBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" />
+                  <Insets />
                </VBox.margin>
               </TextField>
           </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
        </VBox>
    </children>
 </Pane>
