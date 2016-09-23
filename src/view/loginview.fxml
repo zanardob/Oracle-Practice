@@ -5,27 +5,33 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox alignment="CENTER" prefHeight="150.0" prefWidth="300.0">
+      <VBox alignment="CENTER" prefHeight="150.0" prefWidth="300.0" spacing="10.0">
          <children>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="25.0">
-               <children>
-                  <Label text="Login: " />
-                  <TextField fx:id="txtLogin" />
-               </children>
-            </HBox>
-            <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <Label text="Password: " />
-                  <TextField fx:id="txtPassword" />
-               </children>
-            </HBox>
-            <Button mnemonicParsing="false" onAction="#authenticate" text="Authenticate" />
+            <BorderPane prefHeight="30.0" prefWidth="200.0">
+               <left>
+                  <Label text="Login: " BorderPane.alignment="CENTER" />
+               </left>
+               <right>
+                  <TextField fx:id="txtLogin" BorderPane.alignment="CENTER" />
+               </right>
+            </BorderPane>
+            <BorderPane prefHeight="30.0" prefWidth="200.0">
+               <left>
+                  <Label text="Password: " BorderPane.alignment="CENTER" />
+               </left>
+               <right>
+                  <PasswordField BorderPane.alignment="CENTER" />
+               </right>
+            </BorderPane>
+            <Button mnemonicParsing="false" onAction="#authenticate" text="Authenticate">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin></Button>
          </children>
          <padding>
-            <Insets bottom="15.0" left="5.0" right="5.0" top="5.0" />
+            <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
          </padding>
          <opaqueInsets>
             <Insets />
