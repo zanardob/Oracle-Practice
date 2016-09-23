@@ -9,15 +9,26 @@
    <children>
        <VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="600.0" spacing="5.0">
           <children>
-              <HBox alignment="CENTER" prefHeight="31.0" prefWidth="600.0" spacing="10.0">
-                  <VBox.margin>
-                      <Insets left="5.0" right="5.0" top="5.0" />
-                  </VBox.margin>
-                 <children>
-                     <Label text="Select a table:" />
-                     <ComboBox fx:id="cboxTableSelect" onAction="#fillTableView" prefWidth="150.0" />
-                 </children>
-              </HBox>
+            <BorderPane prefHeight="30.0" prefWidth="200.0">
+               <left>
+                    <HBox alignment="CENTER" prefHeight="31.0" prefWidth="273.0" spacing="10.0" BorderPane.alignment="CENTER_LEFT">
+                       <children>
+                           <Label text="Select a table:" />
+                           <ComboBox fx:id="cboxTableSelect" onAction="#fillTableView" prefWidth="150.0" />
+                       </children>
+                    </HBox>
+               </left>
+               <right>
+                  <Button mnemonicParsing="false" onAction="#getSchemaSQL" text="Schema SQL" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets right="5.0" />
+                     </BorderPane.margin>
+                  </Button>
+               </right>
+               <padding>
+                  <Insets top="5.0" />
+               </padding>
+            </BorderPane>
               <TableView fx:id="tableView" prefHeight="400.0" prefWidth="200.0">
                   <VBox.margin>
                       <Insets left="5.0" right="5.0" />
@@ -28,7 +39,7 @@
                   <Insets left="5.0" right="5.0" />
                </VBox.margin>
                <left>
-                  <Button mnemonicParsing="false" onAction="#viewPrivileges" text="View Privileges" BorderPane.alignment="CENTER" />
+                  <Button mnemonicParsing="false" onAction="#viewPrivileges" text="Check privileges" BorderPane.alignment="CENTER" />
                </left>
                <right>
                     <Button mnemonicParsing="false" onAction="#insert" text="Add entry" BorderPane.alignment="CENTER" />
