@@ -19,6 +19,7 @@ import javafx.scene.control.*;
 import javafx.util.Callback;
 import utils.EntityType;
 
+import javax.xml.validation.Schema;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.ResultSet;
@@ -39,7 +40,6 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         dm = new DataManager();
-        fillComboBox();
     }
 
     public void fillComboBox() {
@@ -58,18 +58,9 @@ public class MainController implements Initializable {
             txtError.setText("Check your JDBC driver.");
             e.printStackTrace();
         } catch (SQLException e) {
-            txtError.setText("Erro SQL: " + e.getMessage());
+            txtError.setText("SQL Error: " + e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    private void showSelectionAlert(){
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setHeaderText("No table selected!");
-        alert.setContentText("Please select a TABLE from the list.");
-
-        cboxTableSelect.requestFocus();
-        alert.showAndWait();
     }
 
     // Gets the realName of an entity from the list of fntities
@@ -126,7 +117,7 @@ public class MainController implements Initializable {
             txtError.setText("Check your JDBC driver.");
             e.printStackTrace();
         } catch (SQLException e) {
-            txtError.setText("Erro SQL: " + e.getMessage());
+            txtError.setText("SQL Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -140,7 +131,7 @@ public class MainController implements Initializable {
 
             Entity entity = getEntity();
             if(entity.getEntityType() != EntityType.TABLE) {
-                showSelectionAlert();
+                txtError.setText("You can't add an entry in a view/snapshot!");
                 return;
             }
             String entityName = entity.getRealName();
@@ -160,12 +151,12 @@ public class MainController implements Initializable {
             txtError.setText("Application files corrupted.");
             e.printStackTrace();
         } catch (NullPointerException e){
-            showSelectionAlert();
+            txtError.setText("No table selected!");
             e.printStackTrace();
         }
     }
 
-    public void viewPrivileges(ActionEvent actionEvent) {
+    public void checkPrivileges(ActionEvent actionEvent) {
         Stage privileges = new Stage();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/privilegesview.fxml"));
 
@@ -189,7 +180,29 @@ public class MainController implements Initializable {
             txtError.setText("Application files corrupted.");
             e.printStackTrace();
         } catch (NullPointerException e){
-            showSelectionAlert();
+            txtError.setText("No table selected!");
+            e.printStackTrace();
+        }
+    }
+
+    public void viewSchemaDDL(ActionEvent actionEvent) {
+        Stage ddls = new Stage();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/schemaddlview.fxml"));
+
+        try {
+            Parent root = loader.load();
+
+            SchemaDDLController controller = loader.getController();
+            controller.setTxtError(txtError);
+            controller.fillTextArea(null);
+
+            ddls.setScene(new Scene(root));
+            ddls.setTitle("DDLs for all tables on the schema");
+            ddls.initModality(Modality.APPLICATION_MODAL);
+            ddls.initOwner(txtError.getScene().getWindow());
+            ddls.showAndWait();
+        } catch (IOException e) {
+            txtError.setText("Application files corrupted.");
             e.printStackTrace();
         }
     }

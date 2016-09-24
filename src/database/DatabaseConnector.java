@@ -6,13 +6,13 @@ import java.sql.SQLException;
 
 public class DatabaseConnector {
     private static final String CONNECTION = "jdbc:oracle:thin:@grad.icmc.usp.br:15215:orcl";
-    private static final String USERNAME = "n8937250";
-    private static final String PASSWORD = "n8937250";
+    private static String username;
+    private static String password;
     private static Connection connection = null;
 
     private static void connect() throws ClassNotFoundException, SQLException {
         Class.forName("oracle.jdbc.driver.OracleDriver");
-        connection = DriverManager.getConnection(CONNECTION, USERNAME, PASSWORD);
+        connection = DriverManager.getConnection(CONNECTION, username, password);
     }
 
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
@@ -24,4 +24,8 @@ public class DatabaseConnector {
         return connection;
     }
 
+    public static void setCredentials(String username, String password){
+        DatabaseConnector.username = username;
+        DatabaseConnector.password = password;
+    }
 }

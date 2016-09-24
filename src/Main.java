@@ -11,7 +11,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/mainview.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/loginview.fxml"));
         Parent root = loader.load();
         Stage stage = new Stage();
         stage.setTitle("Sisgate - Sistema Gerenciador de Atividades Eleitorais");

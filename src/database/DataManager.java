@@ -6,6 +6,7 @@ import utils.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class DataManager {
 
@@ -109,5 +110,44 @@ public class DataManager {
         String query = "INSERT INTO " + entityName + " (" + fieldNames + ") VALUES (" + fieldValues + ")";
         System.out.println(query);
         statement.executeQuery(query);
+    }
+
+    public ArrayList<String> getTableDDL() throws SQLException, ClassNotFoundException {
+        // Changes variables in the Oracle database to print a better result
+        // (without storing and segmentation information and with a semicolon after every command)
+        String transformDatabase = "BEGIN " +
+                "dbms_metadata.set_transform_param(dbms_metadata.session_transform,'STORAGE', false); " +
+                "dbms_metadata.set_transform_param(dbms_metadata.session_transform,'SEGMENT_ATTRIBUTES', false); " +
+                "dbms_metadata.set_transform_param(dbms_metadata.session_transform,'SQLTERMINATOR', true); " +
+                "END;";
+
+        // Restores the variables changed above to their default values
+        String restoreDatabase = "BEGIN " +
+                "dbms_metadata.set_transform_param(dbms_metadata.session_transform,'DEFAULT'); " +
+                "END;";
+
+        // Returns only the tables that start with "LE" as cited in the practice specification
+        String query = "SELECT DBMS_METADATA.GET_DDL('TABLE', u.table_name) AS TABLE_DDL FROM USER_TABLES u WHERE u.TABLE_NAME LIKE 'LE%'";
+
+        Connection connection = DatabaseConnector.getConnection();
+        ArrayList<String> tableDDLs = new ArrayList<>();
+
+        Statement changeDBStatement = connection.prepareStatement(transformDatabase);
+        changeDBStatement.executeUpdate(transformDatabase);
+
+        Statement queryStatement = connection.createStatement();
+        ResultSet rs = queryStatement.executeQuery(query);
+        while(rs.next()){
+            // Add each row to a list of table DDLs
+            tableDDLs.add(rs.getString("TABLE_DDL"));
+        }
+
+        changeDBStatement = connection.prepareStatement(restoreDatabase);
+        changeDBStatement.executeUpdate(restoreDatabase);
+
+        // Sort the list alphabetically (so that LE01 will appear before LE02 and so on)
+        Collections.sort(tableDDLs, String.CASE_INSENSITIVE_ORDER);
+
+        return tableDDLs;
     }
 }

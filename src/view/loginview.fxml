@@ -5,7 +5,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
    <children>
       <VBox alignment="CENTER" prefHeight="150.0" prefWidth="300.0" spacing="10.0">
          <children>
@@ -22,7 +22,7 @@
                   <Label text="Password: " BorderPane.alignment="CENTER" />
                </left>
                <right>
-                  <PasswordField BorderPane.alignment="CENTER" />
+                  <PasswordField fx:id="pwdField" BorderPane.alignment="CENTER" />
                </right>
             </BorderPane>
             <Button mnemonicParsing="false" onAction="#authenticate" text="Authenticate">
