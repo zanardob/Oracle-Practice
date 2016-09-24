@@ -8,6 +8,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import database.DataManager;
 import javafx.stage.Stage;
+import utils.Constraint;
+import utils.Entity;
 import utils.Field;
 import utils.FieldType;
 
@@ -17,10 +19,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.UnaryOperator;
 
 public class InsertController implements Initializable {
@@ -78,9 +77,11 @@ public class InsertController implements Initializable {
             closeWindow(null);
         } catch (ClassNotFoundException e) {
             txtError.setText("Check your JDBC driver.");
+            insertedFields.clear();
             e.printStackTrace();
         } catch (SQLException e) {
             txtError.setText("SQL Error: " + e.getMessage());
+            insertedFields.clear();
             e.printStackTrace();
         }
     }
@@ -90,9 +91,19 @@ public class InsertController implements Initializable {
         stage.close();
     }
 
+    private Constraint getConstraint(ArrayList<Constraint> constraints, String columnName){
+        Optional<Constraint> constraint = constraints
+                .stream()
+                .filter(c -> c.getColumnName().equalsIgnoreCase(columnName))
+                .findFirst();
+
+        return constraint.orElse(null);
+    }
+
     public void fillDialog(ActionEvent actionEvent){
         try {
             ResultSet rs = dm.getColumnMetadata(entityName);
+            ArrayList<Constraint> constraints = dm.getTableConstraints(entityName);
 
             // Filter to be used in number fields to only accept digits
             UnaryOperator<TextFormatter.Change> numberFilter = change -> {
@@ -114,22 +125,36 @@ public class InsertController implements Initializable {
                 // Creates the Field object to add to the list
                 FieldType fieldType;
 
-                if(Objects.equals(dataType, "DATE")) {
+                if(Objects.equals(dataType, "NUMBER")) {
+                    fieldType = FieldType.NUMBER;
+                } else if(Objects.equals(dataType, "DATE")){
+                    fieldType = FieldType.DATE;
+                } else {
+                    fieldType = FieldType.STRING;
+                }
+
+                Constraint constraint = getConstraint(constraints, fieldName);
+                BorderPane bpnField;
+                if(constraint != null){
+                    ComboBox<String> cboxValues = new ComboBox<>();
+                    cboxValues.setPrefWidth(187);
+                    cboxValues.setPrefHeight(31);
+
+                    bpnField = new BorderPane(null, null, cboxValues, null, lblField);
+
+                    cboxValues.setItems(constraint.getValues());
+                    cboxFields.add(cboxValues);
+                } else if(fieldType == FieldType.DATE) {
                     DatePicker datePicker = new DatePicker();
                     datePicker.setPrefWidth(187);
                     datePicker.setPrefHeight(31);
                     datePicker.setEditable(false);
-                    BorderPane bpnField = new BorderPane(null, null, datePicker, null, lblField);
-                    vboxFields.getChildren().add(bpnField);
 
-                    fieldType = FieldType.DATE;
-
+                    bpnField = new BorderPane(null, null, datePicker, null, lblField);
                     dpFields.add(datePicker);
-                }
-                else {
+                } else {
                     TextField txtField = new TextField();
-                    BorderPane bpnField = new BorderPane(null, null, txtField, null, lblField);
-                    vboxFields.getChildren().add(bpnField);
+                    bpnField = new BorderPane(null, null, txtField, null, lblField);
 
                     // Listener to limit the textField length
                     txtField.lengthProperty().addListener((observable, oldValue, newValue) -> {
@@ -142,16 +167,15 @@ public class InsertController implements Initializable {
                         }
                     });
 
-                    if(Objects.equals(dataType, "NUMBER")) {
-                        fieldType = FieldType.NUMBER;
+                    if(fieldType == FieldType.NUMBER)
                         txtField.setTextFormatter(new TextFormatter<>(numberFilter));
-                    } else {
-                        fieldType = FieldType.STRING;
-                    }
 
                     // We need this list to access the values typed in
                     txtFields.add(txtField);
                 }
+
+                vboxFields.getChildren().add(bpnField);
+
                 // Add the Field object to a list to be accessed later (in the insert)
                 fields.add(new Field(fieldName, fieldType));
             }

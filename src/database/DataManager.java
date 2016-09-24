@@ -150,4 +150,38 @@ public class DataManager {
 
         return tableDDLs;
     }
+
+    public ArrayList<Constraint> getTableConstraints(String tableName) throws SQLException, ClassNotFoundException {
+        Connection connection = DatabaseConnector.getConnection();
+        Statement statement = connection.createStatement();
+        ArrayList<Constraint> constraints = new ArrayList<>();
+
+        String query = "SELECT CONSTRAINT_TYPE, SEARCH_CONDITION FROM USER_CONSTRAINTS WHERE TABLE_NAME = '" + tableName + "' AND (CONSTRAINT_TYPE = 'C' OR CONSTRAINT_TYPE = 'R') AND CONSTRAINT_NAME NOT LIKE 'SYS_%'";
+
+        ResultSet rs = statement.executeQuery(query);
+        while(rs.next()){
+            String searchCondition = rs.getString("search_condition");
+
+            if(Objects.equals(rs.getString("constraint_type"), "C")){
+                String[] split = searchCondition.split(" ");
+
+                if(Objects.equals(split[1], "IN")){
+                    String[] values = split[2].split("[(',)]");
+
+                    Constraint constraint = new Constraint();
+                    constraint.setColumnName(split[0]);
+                    for(String s : values) {
+                        if(!Objects.equals(s, ""))
+                            constraint.addValue(s);
+                    }
+
+                    constraints.add(constraint);
+                }
+            } else {
+                System.out.println("VAI SE FUDE");
+            }
+        }
+
+        return constraints;
+    }
 }
