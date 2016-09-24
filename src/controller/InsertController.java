@@ -31,6 +31,7 @@ public class InsertController implements Initializable {
     private ArrayList<TextField> txtFields;
     private ArrayList<DatePicker> dpFields;
     private ArrayList<ComboBox> cboxFields;
+    ArrayList<Constraint> constraints;
 
     @FXML private VBox vboxFields;
 
@@ -43,7 +44,7 @@ public class InsertController implements Initializable {
         dpFields = new ArrayList<>();
         cboxFields = new ArrayList<>();
 
-        fillDialog(null);
+        //fillDialog(null);
     }
 
     public void confirm(ActionEvent actionEvent) {
@@ -52,7 +53,15 @@ public class InsertController implements Initializable {
         int cb = 0;
         int tf = 0;
         for(int i = 0; i < fields.size(); i++){
-            if(fields.get(i).getType() == FieldType.DATE) {
+            Constraint constraint = getConstraint(constraints, fields.get(i).getName());
+            if(constraint != null) {
+                if(!Objects.equals(cboxFields.get(cb).getValue().toString(), "")) {
+                    fields.get(i).setValue(cboxFields.get(cb).getValue().toString());
+                    insertedFields.add(fields.get(i));
+                }
+                cb++;
+            }
+            else if(fields.get(i).getType() == FieldType.DATE) {
                 if(dpFields.get(dp).getValue() != null) {
                     Date date = Date.from(dpFields.get(dp).getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
                     fields.get(i).setValue(new SimpleDateFormat("yyyy/MM/dd").format(date));
@@ -67,7 +76,6 @@ public class InsertController implements Initializable {
                 }
                 tf++;
             }
-            System.out.println(fields.get(i).getValue());
         }
 
         try {
@@ -84,6 +92,7 @@ public class InsertController implements Initializable {
             insertedFields.clear();
             e.printStackTrace();
         }
+        closeWindow(null);
     }
 
     public void closeWindow(ActionEvent actionEvent) {
@@ -103,7 +112,7 @@ public class InsertController implements Initializable {
     public void fillDialog(ActionEvent actionEvent){
         try {
             ResultSet rs = dm.getColumnMetadata(entityName);
-            ArrayList<Constraint> constraints = dm.getTableConstraints(entityName);
+            constraints = dm.getTableConstraints(entityName);
 
             // Filter to be used in number fields to only accept digits
             UnaryOperator<TextFormatter.Change> numberFilter = change -> {

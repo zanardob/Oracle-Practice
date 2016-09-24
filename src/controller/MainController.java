@@ -40,6 +40,16 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         dm = new DataManager();
+
+        try {
+            DataManager.getTableForeignKeyConstraints();
+        } catch (SQLException e) {
+            txtError.setText("Check your JDBC driver.");
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            txtError.setText("SQL Error: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public void fillComboBox() {

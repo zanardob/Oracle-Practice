@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Objects;
 
 public class DataManager {
+    private static ArrayList<ForeignKeyConstraint> foreignKeys;
 
     public ArrayList<Entity> getEntityList() throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseConnector.getConnection();
@@ -151,6 +152,31 @@ public class DataManager {
         return tableDDLs;
     }
 
+    public static void getTableForeignKeyConstraints() throws SQLException, ClassNotFoundException {
+        Connection connection = DatabaseConnector.getConnection();
+        Statement statement = connection.createStatement();
+        foreignKeys = new ArrayList<>();
+
+        String query =
+                "SELECT " +
+                        "COLS.TABLE_NAME, " +
+                        "COLS.COLUMN_NAME, " +
+                        "CONS_R.TABLE_NAME R_TABLE_NAME, " +
+                        "COLS_R.COLUMN_NAME R_COLUMN_NAME " +
+                        "FROM USER_CONSTRAINTS CONS " +
+                        "LEFT JOIN USER_CONS_COLUMNS COLS ON COLS.CONSTRAINT_NAME = CONS.CONSTRAINT_NAME " +
+                        "LEFT JOIN USER_CONSTRAINTS CONS_R ON CONS_R.CONSTRAINT_NAME = CONS.R_CONSTRAINT_NAME " +
+                        "LEFT JOIN USER_CONS_COLUMNS COLS_R ON COLS_R.CONSTRAINT_NAME = CONS.R_CONSTRAINT_NAME " +
+                        "WHERE CONS.CONSTRAINT_TYPE = 'R' AND CONS.CONSTRAINT_NAME NOT IN " +
+                        "(SELECT CONSTRAINT_NAME FROM USER_CONS_COLUMNS GROUP BY CONSTRAINT_NAME HAVING COUNT(*) > 1)";
+
+        ResultSet rs = statement.executeQuery(query);
+
+        while(rs.next()) {
+            foreignKeys.add(new ForeignKeyConstraint(rs.getString("table_name"), rs.getString("column_name"), rs.getString("r_table_name"), rs.getString("r_column_name")));
+        }
+    }
+
     public ArrayList<Constraint> getTableConstraints(String tableName) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseConnector.getConnection();
         Statement statement = connection.createStatement();
@@ -178,7 +204,19 @@ public class DataManager {
                     constraints.add(constraint);
                 }
             } else {
-                System.out.println("VAI SE FUDE");
+                for(ForeignKeyConstraint fkConstraint : foreignKeys) {
+                    if(Objects.equals(fkConstraint.getTableName(), tableName)) {
+                        Constraint constraint = new Constraint();
+                        constraint.setColumnName(fkConstraint.getColumnName());
+
+                        String queryForValues = "SELECT " + fkConstraint.getReferredColumnName() + " FROM " + fkConstraint.getReferredTableName();
+                        ResultSet rsValues = connection.createStatement().executeQuery(queryForValues);
+                        while(rsValues.next()) {
+                            constraint.addValue(rsValues.getString(fkConstraint.getReferredColumnName()));
+                        }
+                        constraints.add(constraint);
+                    }
+                }
             }
         }
 
