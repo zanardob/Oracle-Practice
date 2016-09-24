@@ -7,6 +7,7 @@ import utils.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 
 public class DataManager {
 
@@ -91,13 +92,12 @@ public class DataManager {
         for(int i = 0; i < fields.size(); i++){
             Field f = fields.get(i);
 
+            fieldNames = fieldNames + f.getName();
             if (f.getType() == FieldType.NUMBER) {
-                fieldNames = fieldNames + f.getName();
                 fieldValues = fieldValues + f.getValue();
             }else if (f.getType() == FieldType.DATE){
-                // TODO
+                fieldValues = fieldValues + "TO_DATE('" + f.getValue() + "', 'yyyy/mm/dd')";
             }else {
-                fieldNames = fieldNames + f.getName();
                 fieldValues = fieldValues + "'" + f.getValue() + "'";
             }
 
