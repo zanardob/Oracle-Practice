@@ -17,31 +17,15 @@ public class ForeignKeyConstraint {
         return tableName;
     }
 
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
-
     public String getColumnName() {
         return columnName;
-    }
-
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
     }
 
     public String getReferredTableName() {
         return referredTableName;
     }
 
-    public void setReferredTableName(String referredTableName) {
-        this.referredTableName = referredTableName;
-    }
-
     public String getReferredColumnName() {
         return referredColumnName;
-    }
-
-    public void setReferredColumnName(String referredColumnName) {
-        this.referredColumnName = referredColumnName;
     }
 }

@@ -1,7 +1,6 @@
 package controller;
 
 import database.DataManager;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,9 +18,9 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class PrivilegeController implements Initializable {
-    @FXML public TableView<UserPrivilege> privilegeTableView;
-    @FXML public TableColumn<UserPrivilege, String> User;
-    @FXML public TableColumn<UserPrivilege, String> Privilege;
+    @FXML private TableView<UserPrivilege> privilegeTableView;
+    @FXML private TableColumn<UserPrivilege, String> User;
+    @FXML private TableColumn<UserPrivilege, String> Privilege;
 
     private Entity entity;
     private TextField txtError;
@@ -32,7 +31,10 @@ public class PrivilegeController implements Initializable {
         dm = new DataManager();
     }
 
-    public void fillTableView(ActionEvent actionEvent){
+    /**
+     * Get the privileges for the selected table on the ComboBox
+     */
+    void fillTableView(ActionEvent actionEvent){
         try {
             ObservableList<UserPrivilege> privileges = dm.getPrivileges(entity);
             privilegeTableView.setItems(privileges);
@@ -43,7 +45,7 @@ public class PrivilegeController implements Initializable {
             txtError.setText("Check your JDBC driver.");
             e.printStackTrace();
         } catch (SQLException e) {
-            txtError.setText("Erro SQL: " + e.getMessage());
+            txtError.setText("SQL Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -53,11 +55,11 @@ public class PrivilegeController implements Initializable {
         stage.close();
     }
 
-    public void setEntity(Entity entity) {
+    void setEntity(Entity entity) {
         this.entity = entity;
     }
 
-    public void setTxtError(TextField txtError) {
+    void setTxtError(TextField txtError) {
         this.txtError = txtError;
     }
 }

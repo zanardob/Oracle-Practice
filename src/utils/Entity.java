@@ -1,9 +1,9 @@
 package utils;
 
 public class Entity {
-    private String realName;
-    private String viewName;
-    private EntityType entityType;
+    private final String realName;
+    private final String viewName;
+    private final EntityType entityType;
 
     public Entity(String name, EntityType entityType) {
         this.realName = name;

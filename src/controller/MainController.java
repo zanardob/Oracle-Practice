@@ -1,5 +1,6 @@
 package controller;
 
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -19,7 +20,6 @@ import javafx.scene.control.*;
 import javafx.util.Callback;
 import utils.EntityType;
 
-import javax.xml.validation.Schema;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.ResultSet;
@@ -30,29 +30,63 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 public class MainController implements Initializable {
+    @FXML private ComboBox cboxTableSelect;
+    @FXML private TableView tableView;
+    @FXML private TextField txtError;
+    @FXML private Button btnInsert;
+    @FXML private Button btnSchemaDDL;
+
     private DataManager dm;
     private ArrayList<Entity> entities;
-
-    @FXML public ComboBox cboxTableSelect;
-    @FXML public TableView tableView;
-    @FXML public TextField txtError;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         dm = new DataManager();
-
-        try {
-            DataManager.getTableForeignKeyConstraints();
-        } catch (SQLException e) {
-            txtError.setText("Check your JDBC driver.");
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            txtError.setText("SQL Error: " + e.getMessage());
-            e.printStackTrace();
-        }
     }
 
-    public void fillComboBox() {
+    /**
+     * Calls both functions in the DataManager that build lists that don't
+     * change during execution; this is done in a thread, but the user
+     * still needs to wait for them to complete if he wants to select a
+     * table, for example.
+     */
+    void buildLists(){
+        txtError.setText("Finishing up...");
+        Task task = new Task<Void>() {
+            @Override
+            public Void call(){
+                try{
+                    DataManager.buildTableDDLList();
+                    DataManager.buildForeignKeyConstraintList();
+                } catch (SQLException e) {
+                    txtError.setText("Check your JDBC driver.");
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    txtError.setText("SQL Error: " + e.getMessage());
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+        };
+
+        task.setOnSucceeded(t -> {
+            btnInsert.setDisable(false);
+            btnSchemaDDL.setDisable(false);
+            txtError.setText("No errors!");
+        });
+        new Thread(task).start();
+    }
+
+    private void changeScene(Stage stage, Parent root, String title){
+        stage.setScene(new Scene(root));
+        stage.setTitle(title);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initOwner(txtError.getScene().getWindow());
+        stage.showAndWait();
+    }
+
+    void fillComboBox() {
         try {
             // Get a list for all the entities in the schema
             entities = dm.getEntityList();
@@ -73,7 +107,9 @@ public class MainController implements Initializable {
         }
     }
 
-    // Gets the realName of an entity from the list of fntities
+    /**
+     * Returns the Entity that matches the selected viewName in the ComboBox
+     */
     private Entity getEntity(){
         Optional<Entity> entity = entities
                 .stream()
@@ -83,7 +119,8 @@ public class MainController implements Initializable {
         return entity.orElseThrow(NullPointerException::new);
     }
 
-    public void fillTableView() {
+    @FXML
+    private void fillTableView() {
         ResultSet rs;
         ObservableList<ObservableList> data = FXCollections.observableArrayList();
         tableView.getItems().clear();
@@ -95,6 +132,7 @@ public class MainController implements Initializable {
             // Query the appropriate entity in the schema
             rs = dm.getEntity(entityName);
 
+            // Building the TableColumns
             for(int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
                 final int j = i;
                 TableColumn column = new TableColumn(rs.getMetaData().getColumnName(i + 1));
@@ -108,6 +146,7 @@ public class MainController implements Initializable {
                 tableView.getColumns().addAll(column);
             }
 
+            // Populating the table
             while(rs.next()) {
                 ObservableList<String> row = FXCollections.observableArrayList();
                 for(int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
@@ -151,11 +190,7 @@ public class MainController implements Initializable {
             controller.setTxtError(txtError);
             controller.fillDialog(null);
 
-            insertion.setScene(new Scene(root));
-            insertion.setTitle("Add new entry into " + entityName);
-            insertion.initModality(Modality.APPLICATION_MODAL);
-            insertion.initOwner(txtError.getScene().getWindow());
-            insertion.showAndWait();
+            changeScene(insertion, root, "Inserting into " + entityName);
             fillTableView();
         } catch (IOException e) {
             txtError.setText("Application files corrupted.");
@@ -181,11 +216,7 @@ public class MainController implements Initializable {
             controller.setTxtError(txtError);
             controller.fillTableView(null);
 
-            privileges.setScene(new Scene(root));
-            privileges.setTitle("Privileges for " + entityName);
-            privileges.initModality(Modality.APPLICATION_MODAL);
-            privileges.initOwner(txtError.getScene().getWindow());
-            privileges.showAndWait();
+            changeScene(privileges, root, "Privileges for " + entityName);
         } catch (IOException e) {
             txtError.setText("Application files corrupted.");
             e.printStackTrace();
@@ -206,11 +237,7 @@ public class MainController implements Initializable {
             controller.setTxtError(txtError);
             controller.fillTextArea(null);
 
-            ddls.setScene(new Scene(root));
-            ddls.setTitle("DDLs for all tables on the schema");
-            ddls.initModality(Modality.APPLICATION_MODAL);
-            ddls.initOwner(txtError.getScene().getWindow());
-            ddls.showAndWait();
+            changeScene(ddls, root, "DDLs for all tables on the schema");
         } catch (IOException e) {
             txtError.setText("Application files corrupted.");
             e.printStackTrace();

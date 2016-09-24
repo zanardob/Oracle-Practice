@@ -9,7 +9,6 @@ import javafx.scene.layout.VBox;
 import database.DataManager;
 import javafx.stage.Stage;
 import utils.Constraint;
-import utils.Entity;
 import utils.Field;
 import utils.FieldType;
 
@@ -17,12 +16,13 @@ import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.function.UnaryOperator;
 
 public class InsertController implements Initializable {
+    @FXML private VBox vboxFields;
+
     private DataManager dm;
     private String entityName;
     private TextField txtError;
@@ -31,9 +31,7 @@ public class InsertController implements Initializable {
     private ArrayList<TextField> txtFields;
     private ArrayList<DatePicker> dpFields;
     private ArrayList<ComboBox> cboxFields;
-    ArrayList<Constraint> constraints;
-
-    @FXML private VBox vboxFields;
+    private ArrayList<Constraint> constraints;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -43,8 +41,6 @@ public class InsertController implements Initializable {
         txtFields = new ArrayList<>();
         dpFields = new ArrayList<>();
         cboxFields = new ArrayList<>();
-
-        //fillDialog(null);
     }
 
     public void confirm(ActionEvent actionEvent) {
@@ -52,27 +48,25 @@ public class InsertController implements Initializable {
         int dp = 0;
         int cb = 0;
         int tf = 0;
-        for(int i = 0; i < fields.size(); i++){
-            Constraint constraint = getConstraint(constraints, fields.get(i).getName());
-            if(constraint != null) {
-                if(!Objects.equals(cboxFields.get(cb).getValue().toString(), "")) {
-                    fields.get(i).setValue(cboxFields.get(cb).getValue().toString());
-                    insertedFields.add(fields.get(i));
+        for (Field f : fields) {
+            Constraint constraint = getConstraint(constraints, f.getName());
+            if (constraint != null) {
+                if (!Objects.equals(cboxFields.get(cb).getValue().toString(), "")) {
+                    f.setValue(cboxFields.get(cb).getValue().toString());
+                    insertedFields.add(f);
                 }
                 cb++;
-            }
-            else if(fields.get(i).getType() == FieldType.DATE) {
-                if(dpFields.get(dp).getValue() != null) {
+            } else if (f.getType() == FieldType.DATE) {
+                if (dpFields.get(dp).getValue() != null) {
                     Date date = Date.from(dpFields.get(dp).getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-                    fields.get(i).setValue(new SimpleDateFormat("yyyy/MM/dd").format(date));
-                    insertedFields.add(fields.get(i));
+                    f.setValue(new SimpleDateFormat("yyyy/MM/dd").format(date));
+                    insertedFields.add(f);
                 }
                 dp++;
-            }
-            else {
-                if(!Objects.equals(txtFields.get(tf).getText(), "")) {
-                    fields.get(i).setValue(txtFields.get(tf).getText());
-                    insertedFields.add(fields.get(i));
+            } else {
+                if (!Objects.equals(txtFields.get(tf).getText(), "")) {
+                    f.setValue(txtFields.get(tf).getText());
+                    insertedFields.add(f);
                 }
                 tf++;
             }
@@ -95,11 +89,15 @@ public class InsertController implements Initializable {
         closeWindow(null);
     }
 
-    public void closeWindow(ActionEvent actionEvent) {
+    @FXML
+    private void closeWindow(ActionEvent actionEvent) {
         Stage stage = (Stage) vboxFields.getScene().getWindow();
         stage.close();
     }
 
+    /**
+     * Returns the Constraint that matches the given columnName in the list
+     */
     private Constraint getConstraint(ArrayList<Constraint> constraints, String columnName){
         Optional<Constraint> constraint = constraints
                 .stream()
@@ -109,7 +107,7 @@ public class InsertController implements Initializable {
         return constraint.orElse(null);
     }
 
-    public void fillDialog(ActionEvent actionEvent){
+    void fillDialog(ActionEvent actionEvent){
         try {
             ResultSet rs = dm.getColumnMetadata(entityName);
             constraints = dm.getTableConstraints(entityName);
@@ -165,7 +163,7 @@ public class InsertController implements Initializable {
                     TextField txtField = new TextField();
                     bpnField = new BorderPane(null, null, txtField, null, lblField);
 
-                    // Listener to limit the textField length
+                    // Listener to limit the TextField length
                     txtField.lengthProperty().addListener((observable, oldValue, newValue) -> {
                         if (newValue.intValue() > oldValue.intValue()) {
                             // Check if the new character is greater than the maxSize
@@ -197,11 +195,11 @@ public class InsertController implements Initializable {
         }
     }
 
-    public void setEntityName(String entityName) {
+    void setEntityName(String entityName) {
         this.entityName = entityName;
     }
 
-    public void setTxtError(TextField txtError) {
+    void setTxtError(TextField txtError) {
         this.txtError = txtError;
     }
 }

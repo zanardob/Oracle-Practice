@@ -11,7 +11,11 @@ import java.util.Objects;
 
 public class DataManager {
     private static ArrayList<ForeignKeyConstraint> foreignKeys;
+    private static ArrayList<String> tableDDLs;
 
+    /**
+     * Returns all the entities in the schema to fill the ComboBox
+     */
     public ArrayList<Entity> getEntityList() throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseConnector.getConnection();
         Statement statement = connection.createStatement();
@@ -40,24 +44,32 @@ public class DataManager {
         return entities;
     }
 
+    /**
+     * Simple select from a table to populate the TableView
+     */
     public ResultSet getEntity(String entityName) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseConnector.getConnection();
         Statement statement = connection.createStatement();
         String query = "SELECT * FROM " + entityName;
-        ResultSet rs = statement.executeQuery(query);
 
-        return rs;
+        return statement.executeQuery(query);
     }
 
+    /**
+     * Some metadata query to fill the insertion form
+     */
     public ResultSet getColumnMetadata(String entityName) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseConnector.getConnection();
         Statement statement = connection.createStatement();
         String query = "SELECT COLUMN_NAME, DATA_TYPE, DATA_LENGTH FROM USER_TAB_COLUMNS WHERE TABLE_NAME = '" + entityName + "'";
-        ResultSet rs = statement.executeQuery(query);
 
-        return rs;
+        return statement.executeQuery(query);
     }
 
+    /**
+     * Used to populate the privileges TableView
+     * NOTE: the owner of the table is always added with an "OWNER' permission
+     */
     public ObservableList<UserPrivilege> getPrivileges(Entity entity) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseConnector.getConnection();
         Statement statement = connection.createStatement();
@@ -84,6 +96,9 @@ public class DataManager {
         return privileges;
     }
 
+    /**
+     * Adding a new entry into a table
+     */
     public void addEntry(String entityName, ArrayList<Field> fields) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseConnector.getConnection();
         Statement statement = connection.createStatement();
@@ -109,11 +124,14 @@ public class DataManager {
         }
 
         String query = "INSERT INTO " + entityName + " (" + fieldNames + ") VALUES (" + fieldValues + ")";
-        System.out.println(query);
         statement.executeQuery(query);
     }
 
-    public ArrayList<String> getTableDDL() throws SQLException, ClassNotFoundException {
+    /**
+     * Builds the list that holds the DDL for all the tables in the schema
+     * Table name needs to start with "LE"
+     */
+    public static void buildTableDDLList() throws SQLException, ClassNotFoundException {
         // Changes variables in the Oracle database to print a better result
         // (without storing and segmentation information and with a semicolon after every command)
         String transformDatabase = "BEGIN " +
@@ -131,7 +149,7 @@ public class DataManager {
         String query = "SELECT DBMS_METADATA.GET_DDL('TABLE', u.table_name) AS TABLE_DDL FROM USER_TABLES u WHERE u.TABLE_NAME LIKE 'LE%'";
 
         Connection connection = DatabaseConnector.getConnection();
-        ArrayList<String> tableDDLs = new ArrayList<>();
+        tableDDLs = new ArrayList<>();
 
         Statement changeDBStatement = connection.prepareStatement(transformDatabase);
         changeDBStatement.executeUpdate(transformDatabase);
@@ -148,11 +166,23 @@ public class DataManager {
 
         // Sort the list alphabetically (so that LE01 will appear before LE02 and so on)
         Collections.sort(tableDDLs, String.CASE_INSENSITIVE_ORDER);
+    }
 
+    /**
+     * Simply returns the DDL list or builds it if it's still null
+     */
+    public ArrayList<String> getTableDDL() throws SQLException, ClassNotFoundException {
+        if(tableDDLs != null)
+            return tableDDLs;
+
+        buildTableDDLList();
         return tableDDLs;
     }
 
-    public static void getTableForeignKeyConstraints() throws SQLException, ClassNotFoundException {
+    /**
+     * Builds the list that contains information about the foreign key constraints
+     */
+    public static void buildForeignKeyConstraintList() throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseConnector.getConnection();
         Statement statement = connection.createStatement();
         foreignKeys = new ArrayList<>();
@@ -161,8 +191,8 @@ public class DataManager {
                 "SELECT " +
                         "COLS.TABLE_NAME, " +
                         "COLS.COLUMN_NAME, " +
-                        "CONS_R.TABLE_NAME R_TABLE_NAME, " +
-                        "COLS_R.COLUMN_NAME R_COLUMN_NAME " +
+                        "CONS_R.TABLE_NAME AS R_TABLE_NAME, " +
+                        "COLS_R.COLUMN_NAME AS R_COLUMN_NAME " +
                         "FROM USER_CONSTRAINTS CONS " +
                         "LEFT JOIN USER_CONS_COLUMNS COLS ON COLS.CONSTRAINT_NAME = CONS.CONSTRAINT_NAME " +
                         "LEFT JOIN USER_CONSTRAINTS CONS_R ON CONS_R.CONSTRAINT_NAME = CONS.R_CONSTRAINT_NAME " +
@@ -177,6 +207,9 @@ public class DataManager {
         }
     }
 
+    /**
+     * Returns a list with the CHECK and FOREIGN KEY constraints for the table received
+     */
     public ArrayList<Constraint> getTableConstraints(String tableName) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseConnector.getConnection();
         Statement statement = connection.createStatement();

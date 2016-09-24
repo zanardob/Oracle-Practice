@@ -13,15 +13,7 @@ public class UserPrivilege {
         return user;
     }
 
-    public void setUser(String user) {
-        this.user = user;
-    }
-
     public String getPrivilege() {
         return privilege;
-    }
-
-    public void setPrivilege(String privilege) {
-        this.privilege = privilege;
     }
 }

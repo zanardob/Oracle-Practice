@@ -23,10 +23,6 @@ public class Constraint {
         return values;
     }
 
-    public void setValues(ObservableList<String> values) {
-        this.values = values;
-    }
-
     public void addValue(String value){
         values.add(value);
     }

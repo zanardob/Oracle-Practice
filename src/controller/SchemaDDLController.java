@@ -4,14 +4,12 @@ import database.DataManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.stage.Stage;
 
-import javax.sound.sampled.Clip;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,9 +20,8 @@ public class SchemaDDLController implements Initializable {
 
     private DataManager dm;
     private TextField txtError;
-
-    final Clipboard clipboard = Clipboard.getSystemClipboard();
-    ClipboardContent content;
+    private ClipboardContent content;
+    private final Clipboard clipboard = Clipboard.getSystemClipboard();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -37,13 +34,20 @@ public class SchemaDDLController implements Initializable {
         stage.close();
     }
 
+    /**
+     * Puts the text from the TextArea into the
+     * system's clipboard for ease of access
+     */
     public void copyCode(ActionEvent actionEvent) {
         content.clear();
         content.putString(txaDDL.getText());
         clipboard.setContent(content);
     }
 
-    public void fillTextArea(ActionEvent actionEvent){
+    /**
+     * Fills the TextArea with the schema DDL code
+     */
+    void fillTextArea(ActionEvent actionEvent){
         try{
             ArrayList<String> tableDDLs = dm.getTableDDL();
 
@@ -63,7 +67,7 @@ public class SchemaDDLController implements Initializable {
         }
     }
 
-    public void setTxtError(TextField txtError) {
+    void setTxtError(TextField txtError) {
         this.txtError = txtError;
     }
 }

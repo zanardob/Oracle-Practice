@@ -22,15 +22,8 @@ public class Field {
         return value;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public FieldType getType() {
         return type;
     }
 
-    public void setType(FieldType type) {
-        this.type = type;
-    }
 }

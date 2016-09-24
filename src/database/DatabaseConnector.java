@@ -4,6 +4,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * Simple class for connecting into the database
+ * The username and password are provided by the user on the first menu
+ */
 public class DatabaseConnector {
     private static final String CONNECTION = "jdbc:oracle:thin:@grad.icmc.usp.br:15215:orcl";
     private static String username;

@@ -4,7 +4,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
 <BorderPane prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PrivilegeController">
    <bottom>
       <Button mnemonicParsing="false" onAction="#closeWindow" text="Back" BorderPane.alignment="CENTER">

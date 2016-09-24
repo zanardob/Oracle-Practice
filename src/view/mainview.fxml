@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
    <children>
        <VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="600.0" spacing="5.0">
@@ -19,7 +17,7 @@
                     </HBox>
                </left>
                <right>
-                  <Button mnemonicParsing="false" onAction="#viewSchemaDDL" text="Schema DDL" BorderPane.alignment="CENTER">
+                  <Button fx:id="btnSchemaDDL" disable="true" mnemonicParsing="false" onAction="#viewSchemaDDL" text="Schema DDL" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
                         <Insets />
                      </BorderPane.margin>
@@ -39,7 +37,7 @@
                   <Button mnemonicParsing="false" onAction="#checkPrivileges" text="Check privileges" BorderPane.alignment="CENTER" />
                </left>
                <right>
-                    <Button mnemonicParsing="false" onAction="#insert" text="Add entry" BorderPane.alignment="CENTER" />
+                    <Button fx:id="btnInsert" disable="true" mnemonicParsing="false" onAction="#insert" text="Add entry" BorderPane.alignment="CENTER" />
                </right>
             </BorderPane>
               <TextField fx:id="txtError" disable="true" focusTraversable="false" text="No errors.">

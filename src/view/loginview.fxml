@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
-
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
    <children>
       <VBox alignment="CENTER" prefHeight="150.0" prefWidth="300.0" spacing="10.0">
@@ -14,7 +12,7 @@
                   <Label text="Login: " BorderPane.alignment="CENTER" />
                </left>
                <right>
-                  <TextField fx:id="txtLogin" BorderPane.alignment="CENTER" />
+                  <TextField fx:id="txtLogin" onAction="#authenticate" BorderPane.alignment="CENTER" />
                </right>
             </BorderPane>
             <BorderPane prefHeight="30.0" prefWidth="200.0">
@@ -22,7 +20,7 @@
                   <Label text="Password: " BorderPane.alignment="CENTER" />
                </left>
                <right>
-                  <PasswordField fx:id="pwdField" BorderPane.alignment="CENTER" />
+                  <PasswordField fx:id="pwdField" onAction="#authenticate" BorderPane.alignment="CENTER" />
                </right>
             </BorderPane>
             <Button mnemonicParsing="false" onAction="#authenticate" text="Authenticate">

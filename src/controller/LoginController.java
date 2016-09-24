@@ -18,6 +18,10 @@ public class LoginController {
     @FXML private TextField txtLogin;
     @FXML private PasswordField pwdField;
 
+    /**
+     * Tries to authenticate in the database using the fields read;
+     * If successful, changes the scene to the Main one
+     */
     public void authenticate(ActionEvent actionEvent) {
         DatabaseConnector.setCredentials(txtLogin.getText(), pwdField.getText());
 
@@ -30,11 +34,11 @@ public class LoginController {
 
             MainController controller = loader.getController();
             controller.fillComboBox();
+            controller.buildLists();
 
             main.setScene(new Scene(root));
             main.centerOnScreen();
             main.show();
-
         } catch (ClassNotFoundException e) {
             showErrorAlert("JDBC driver failure!", "Check your JDBC driver.");
             e.printStackTrace();
