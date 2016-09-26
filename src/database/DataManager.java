@@ -2,7 +2,7 @@ package database;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import utils.*;
+import util.*;
 
 import java.sql.*;
 import java.util.ArrayList;

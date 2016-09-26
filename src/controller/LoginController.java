@@ -38,6 +38,7 @@ public class LoginController {
 
             main.setScene(new Scene(root));
             main.centerOnScreen();
+            main.setResizable(false);
             main.show();
         } catch (ClassNotFoundException e) {
             showErrorAlert("JDBC driver failure!", "Check your JDBC driver.");
@@ -55,6 +56,7 @@ public class LoginController {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setHeaderText(header);
         alert.setContentText(content);
+        alert.setResizable(false);
 
         alert.showAndWait();
     }

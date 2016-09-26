@@ -10,8 +10,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import utils.Entity;
-import utils.UserPrivilege;
+import util.Entity;
+import util.UserPrivilege;
 
 import java.net.URL;
 import java.sql.SQLException;

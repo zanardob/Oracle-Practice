@@ -16,6 +16,7 @@ public class Main extends Application {
         Stage stage = new Stage();
         stage.setTitle("Sisgate - Sistema Gerenciador de Atividades Eleitorais");
         stage.setScene(new Scene(root));
+        stage.setResizable(false);
         stage.show();
     }
 }

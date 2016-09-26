@@ -8,9 +8,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import database.DataManager;
 import javafx.stage.Stage;
-import utils.Constraint;
-import utils.Field;
-import utils.FieldType;
+import util.Constraint;
+import util.Field;
+import util.FieldType;
 
 import java.net.URL;
 import java.sql.ResultSet;
@@ -43,16 +43,28 @@ public class InsertController implements Initializable {
         cboxFields = new ArrayList<>();
     }
 
+    /**
+     * Gets all the values inserted in all input fields (DatePickers, ComboBoxes and TextFields)
+     * and sends them to the DataManager to be inserted in the actual table on the database
+     */
     public void confirm(ActionEvent actionEvent) {
         // Get the text from all the TextFields
         int dp = 0;
         int cb = 0;
         int tf = 0;
+
+        // Manages the input fields (separated in dp (datepickers), cb (comboboxes) and tf (textfields)
+        // Creating a list of "Fields" containing the actual text and data type to be inserted
         for (Field f : fields) {
             Constraint constraint = getConstraint(constraints, f.getName());
             if (constraint != null) {
-                if (!Objects.equals(cboxFields.get(cb).getValue().toString(), "")) {
+                Object cboxValue = cboxFields.get(cb).getValue();
+                if((cboxValue != null) && (!Objects.equals(cboxValue.toString(), ""))) {
                     f.setValue(cboxFields.get(cb).getValue().toString());
+                    insertedFields.add(f);
+                }
+                else {
+                    f.setValue("");
                     insertedFields.add(f);
                 }
                 cb++;
@@ -72,6 +84,7 @@ public class InsertController implements Initializable {
             }
         }
 
+        // Once the fields are filled, the list of fields is sent to the DataManager to be inserted into the tables
         try {
             dm.addEntry(entityName, insertedFields);
             txtError.setText("Entry successfully added.");
@@ -86,7 +99,6 @@ public class InsertController implements Initializable {
             insertedFields.clear();
             e.printStackTrace();
         }
-        closeWindow(null);
     }
 
     @FXML
@@ -143,24 +155,30 @@ public class InsertController implements Initializable {
                 Constraint constraint = getConstraint(constraints, fieldName);
                 BorderPane bpnField;
                 if(constraint != null){
+                    // Creates a ComboBox for the constrained fields
                     ComboBox<String> cboxValues = new ComboBox<>();
-                    cboxValues.setPrefWidth(187);
-                    cboxValues.setPrefHeight(31);
+                    cboxValues.setPrefWidth(180);
+                    cboxValues.setPrefHeight(30);
 
                     bpnField = new BorderPane(null, null, cboxValues, null, lblField);
 
                     cboxValues.setItems(constraint.getValues());
                     cboxFields.add(cboxValues);
                 } else if(fieldType == FieldType.DATE) {
+                    // Creates a DatePicker for the DATE data type
                     DatePicker datePicker = new DatePicker();
-                    datePicker.setPrefWidth(187);
-                    datePicker.setPrefHeight(31);
+                    datePicker.setPrefWidth(180);
+                    datePicker.setPrefHeight(30);
                     datePicker.setEditable(false);
 
                     bpnField = new BorderPane(null, null, datePicker, null, lblField);
                     dpFields.add(datePicker);
                 } else {
+                    // Creates a TextField for the "free" input fields
                     TextField txtField = new TextField();
+                    txtField.setPrefWidth(180);
+                    txtField.setPrefHeight(30);
+
                     bpnField = new BorderPane(null, null, txtField, null, lblField);
 
                     // Listener to limit the TextField length

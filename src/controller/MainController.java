@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import database.DataManager;
-import utils.Entity;
+import util.Entity;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -18,7 +18,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.util.Callback;
-import utils.EntityType;
+import util.EntityType;
 
 import java.io.IOException;
 import java.net.URL;
@@ -83,6 +83,7 @@ public class MainController implements Initializable {
         stage.setTitle(title);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.initOwner(txtError.getScene().getWindow());
+        stage.setResizable(false);
         stage.showAndWait();
     }
 
