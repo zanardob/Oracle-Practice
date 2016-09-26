@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="labd:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/labd_jar</output-path>
+    <root id="archive" name="labd.jar">
+      <element id="module-output" name="labd" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/ojdbc7.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
