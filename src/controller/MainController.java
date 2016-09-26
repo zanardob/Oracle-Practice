@@ -1,6 +1,5 @@
 package controller;
 
-import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -33,8 +32,6 @@ public class MainController implements Initializable {
     @FXML private ComboBox cboxTableSelect;
     @FXML private TableView tableView;
     @FXML private TextField txtError;
-    @FXML private Button btnInsert;
-    @FXML private Button btnSchemaDDL;
 
     private DataManager dm;
     private ArrayList<Entity> entities;
@@ -42,40 +39,20 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         dm = new DataManager();
-    }
 
-    /**
-     * Calls both functions in the DataManager that build lists that don't
-     * change during execution; this is done in a thread, but the user
-     * still needs to wait for them to complete if he wants to select a
-     * table, for example.
-     */
-    void buildLists(){
-        txtError.setText("Finishing up...");
-        Task task = new Task<Void>() {
-            @Override
-            public Void call(){
-                try{
-                    DataManager.buildTableDDLList();
-                    DataManager.buildForeignKeyConstraintList();
-                } catch (SQLException e) {
-                    txtError.setText("Check your JDBC driver.");
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    txtError.setText("SQL Error: " + e.getMessage());
-                    e.printStackTrace();
-                }
-
-                return null;
-            }
-        };
-
-        task.setOnSucceeded(t -> {
-            btnInsert.setDisable(false);
-            btnSchemaDDL.setDisable(false);
-            txtError.setText("No errors!");
-        });
-        new Thread(task).start();
+        // Calls both functions in the DataManager that build lists that don't
+        // change during execution; that's why the "authentication" process
+        // takes some time to complete
+        try {
+            DataManager.buildTableDDLList();
+            DataManager.buildForeignKeyConstraintList();
+        } catch (SQLException e) {
+            txtError.setText("Check your JDBC driver.");
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            txtError.setText("SQL Error: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void changeScene(Stage stage, Parent root, String title){
@@ -235,7 +212,6 @@ public class MainController implements Initializable {
             Parent root = loader.load();
 
             SchemaDDLController controller = loader.getController();
-            controller.setTxtError(txtError);
             controller.fillTextArea(null);
 
             changeScene(ddls, root, "DDLs for all tables on the schema");

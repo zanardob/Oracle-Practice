@@ -34,7 +34,6 @@ public class LoginController {
 
             MainController controller = loader.getController();
             controller.fillComboBox();
-            controller.buildLists();
 
             main.setScene(new Scene(root));
             main.centerOnScreen();

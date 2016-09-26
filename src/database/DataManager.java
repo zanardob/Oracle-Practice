@@ -169,13 +169,9 @@ public class DataManager {
     }
 
     /**
-     * Simply returns the DDL list or builds it if it's still null
+     * Simply returns the DDL list
      */
-    public ArrayList<String> getTableDDL() throws SQLException, ClassNotFoundException {
-        if(tableDDLs != null)
-            return tableDDLs;
-
-        buildTableDDLList();
+    public ArrayList<String> getTableDDL() {
         return tableDDLs;
     }
 

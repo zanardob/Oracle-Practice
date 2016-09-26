@@ -17,7 +17,7 @@
                     </HBox>
                </left>
                <right>
-                  <Button fx:id="btnSchemaDDL" disable="true" mnemonicParsing="false" onAction="#viewSchemaDDL" text="Schema DDL" BorderPane.alignment="CENTER">
+                  <Button mnemonicParsing="false" onAction="#viewSchemaDDL" text="Schema DDL" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
                         <Insets />
                      </BorderPane.margin>
@@ -37,7 +37,7 @@
                   <Button mnemonicParsing="false" onAction="#checkPrivileges" text="Check privileges" BorderPane.alignment="CENTER" />
                </left>
                <right>
-                    <Button fx:id="btnInsert" disable="true" mnemonicParsing="false" onAction="#insert" text="Add entry" BorderPane.alignment="CENTER" />
+                    <Button mnemonicParsing="false" onAction="#insert" text="Add entry" BorderPane.alignment="CENTER" />
                </right>
             </BorderPane>
               <TextField fx:id="txtError" disable="true" focusTraversable="false" text="No errors.">

@@ -63,10 +63,6 @@ public class InsertController implements Initializable {
                     f.setValue(cboxFields.get(cb).getValue().toString());
                     insertedFields.add(f);
                 }
-                else {
-                    f.setValue("");
-                    insertedFields.add(f);
-                }
                 cb++;
             } else if (f.getType() == FieldType.DATE) {
                 if (dpFields.get(dp).getValue() != null) {
