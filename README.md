@@ -1,4 +1,5 @@
-# "labd" - 5th Practice
+# Oracle Practice
+A little interface that connects to an Oracle Database and displays its tables and views. It also allows the user to insert new tuples, select the DDL of the schema and read permissions every user has on a table.
 Project repository: https://github.com/zanardob/labd
 
 This project was made using IntelliJ Idea 2016.2.4.
